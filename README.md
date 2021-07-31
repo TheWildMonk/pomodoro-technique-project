@@ -12,6 +12,6 @@ Pomodoro Technique.</br> </br>
 Tkinter<br />
 
 ### <u>**Project:**</u> <br />
-NATO Phonetic Alphabet Project<br />
+Pomodoro Technique Project<br />
 100 Days of Code - The Complete Python Pro Bootcamp 2021 <br />
 Day 28 - Intermediate - Tkinter, Dynamic Typing and the Pomodoro GUI Application
