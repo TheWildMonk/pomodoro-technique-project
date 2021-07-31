@@ -1,3 +1,4 @@
+import math
 from tkinter import *
 from math import *
 # ---------------------------- CONSTANTS ------------------------------- #
@@ -5,20 +6,36 @@ ORANGE = "#ff7f50"
 RED = "#D83A56"
 GREEN = "#009432"
 YELLOW = "#F8EFBA"
-FONT_NAME = "Raleway"
+FONT_NAME = "raleway"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
+reps = 0
 
 # ---------------------------- TIMER RESET ------------------------------- # 
 
 
-# ---------------------------- TIMER MECHANISM ------------------------------- # 
+# ---------------------------- TIMER MECHANISM ------------------------------- #
 def start_timer():
-    count_down(WORK_MIN * 60)
+    global reps
+    work_sec = WORK_MIN * 60
+    short_break_sec = SHORT_BREAK_MIN * 60
+    long_break_sec = LONG_BREAK_MIN * 60
+    if reps == 7:
+        title_label.config(text="Break", fg=RED)
+        count_down(long_break_sec)
+    elif reps % 2 != 0:
+        title_label.config(text="Break", fg=ORANGE)
+        count_down(short_break_sec)
+    else:
+        title_label.config(text="Work", fg=GREEN)
+        count_down(work_sec)
+    reps += 1
+    if reps > 7:
+        reps = 0
 
 
-# ---------------------------- COUNTDOWN MECHANISM ------------------------------- # 
+# ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 def count_down(count):
     count_minute = floor(count / 60)
     count_second = floor(count % 60)
@@ -26,7 +43,14 @@ def count_down(count):
         count_second = f"0{count_second}"
     canvas.itemconfig(timer_text, text=f"{count_minute}:{count_second}")
     if count > 0:
-        window.after(1000, count_down, count - 1)
+        window.after(1, count_down, count - 1)
+    else:
+        start_timer()
+        mark = ""
+        work_session = math.floor(reps/2)
+        for _ in range(work_session):
+            mark += "✔"
+        check_mark_label.config(text=mark)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -43,7 +67,7 @@ timer_text = canvas.create_text(100, 125, text="00:00", font=(FONT_NAME, 24, "bo
 canvas.grid(row=1, column=1)
 
 # Timer title
-title_label = Label(text="TIMER", font=(FONT_NAME, 50, "bold"), fg=GREEN, bg=YELLOW)
+title_label = Label(text="Timer", font=(FONT_NAME, 50, "bold"), fg=GREEN, bg=YELLOW)
 title_label.grid(row=0, column=1)
 
 # Start button
@@ -51,7 +75,7 @@ start_button = Button(text="START", font=(FONT_NAME, 10, "bold"), fg="white", bg
 start_button.grid(row=2, column=0)
 
 # Check mark label
-check_mark_label = Label(text="✔", font=(FONT_NAME, 10, "bold"), fg=ORANGE, bg=YELLOW, pady=20)
+check_mark_label = Label(font=(FONT_NAME, 10, "bold"), fg=ORANGE, bg=YELLOW, pady=20)
 check_mark_label.grid(row=2, column=1)
 
 # Reset button
