@@ -24,10 +24,12 @@ def reset_timer():
     reps = 0
     check_mark_label.config(text="")
     title_label.config(text="Timer", fg=GREEN)
+    start_button.config(state="normal", bg=GREEN)
 
 
 # Clock timer
 def start_timer():
+    start_button.config(state="disabled", bg=ORANGE)
     global reps
     reps += 1
     if reps > 8:
@@ -57,7 +59,7 @@ def count_down(count):
         count_second = f"0{count_second}"
     canvas.itemconfig(timer_text, text=f"{count_minute}:{count_second}")
     if count > 0:
-        timer = window.after(1000, count_down, count - 1)
+        timer = window.after(1, count_down, count - 1)
     else:
         start_timer()
         marks = ""
@@ -90,7 +92,7 @@ start_button = Button(text="START", font=(FONT_NAME, 10, "bold"), fg="white", bg
 start_button.grid(row=2, column=0)
 
 # Check mark label
-check_mark_label = Label(font=(FONT_NAME, 10, "bold"), fg=ORANGE, bg=YELLOW, pady=20)
+check_mark_label = Label(font=(FONT_NAME, 10, "bold"), fg=GREEN, bg=YELLOW, pady=20)
 check_mark_label.grid(row=2, column=1)
 
 # Reset button
