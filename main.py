@@ -1,7 +1,9 @@
+# Libraries
 import math
 from tkinter import *
 from math import *
-# ---------------------------- CONSTANTS ------------------------------- #
+
+# Constants
 ORANGE = "#ff7f50"
 RED = "#D83A56"
 GREEN = "#009432"
@@ -11,52 +13,65 @@ WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 reps = 0
+timer = None
 
-# ---------------------------- TIMER RESET ------------------------------- # 
+
+# Reset timer
+def reset_timer():
+    global reps
+    window.after_cancel(timer)
+    canvas.itemconfig(timer_text, text="00:00")
+    reps = 0
+    check_mark_label.config(text="")
+    title_label.config(text="Timer", fg=GREEN)
 
 
-# ---------------------------- TIMER MECHANISM ------------------------------- #
+# Clock timer
 def start_timer():
     global reps
-    work_sec = WORK_MIN * 60
-    short_break_sec = SHORT_BREAK_MIN * 60
-    long_break_sec = LONG_BREAK_MIN * 60
-    if reps == 7:
-        title_label.config(text="Break", fg=RED)
-        count_down(long_break_sec)
-    elif reps % 2 != 0:
-        title_label.config(text="Break", fg=ORANGE)
-        count_down(short_break_sec)
-    else:
-        title_label.config(text="Work", fg=GREEN)
-        count_down(work_sec)
     reps += 1
-    if reps > 7:
+    if reps > 8:
         reps = 0
+        start_timer()
+    else:
+        work_sec = WORK_MIN * 60
+        short_break_sec = SHORT_BREAK_MIN * 60
+        long_break_sec = LONG_BREAK_MIN * 60
+        if reps % 8 == 0:
+            title_label.config(text="Break", fg=RED)
+            count_down(long_break_sec)
+        elif reps % 2 == 0:
+            title_label.config(text="Break", fg=ORANGE)
+            count_down(short_break_sec)
+        else:
+            title_label.config(text="Work", fg=GREEN)
+            count_down(work_sec)
 
 
-# ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
+# Timer countdown
 def count_down(count):
+    global timer
     count_minute = floor(count / 60)
     count_second = floor(count % 60)
     if count_second < 10:
         count_second = f"0{count_second}"
     canvas.itemconfig(timer_text, text=f"{count_minute}:{count_second}")
     if count > 0:
-        window.after(1, count_down, count - 1)
+        timer = window.after(1000, count_down, count - 1)
     else:
         start_timer()
-        mark = ""
+        marks = ""
         work_session = math.floor(reps/2)
         for _ in range(work_session):
-            mark += "✔"
-        check_mark_label.config(text=mark)
+            marks += "✔"
+        check_mark_label.config(text=marks)
 
 
-# ---------------------------- UI SETUP ------------------------------- #
+# UI setup
 # Window object definition
 window = Tk()
 window.title("Pomodoro Technique Timer")
+window.resizable(width=False, height=False)
 window.config(padx=100, pady=50, bg=YELLOW)
 
 # Canvas widget
@@ -79,7 +94,7 @@ check_mark_label = Label(font=(FONT_NAME, 10, "bold"), fg=ORANGE, bg=YELLOW, pad
 check_mark_label.grid(row=2, column=1)
 
 # Reset button
-reset_button = Button(text="RESET", font=(FONT_NAME, 10, "bold"), fg="white", bg=GREEN, padx=5)
+reset_button = Button(text="RESET", font=(FONT_NAME, 10, "bold"), fg="white", bg=GREEN, padx=5, command=reset_timer)
 reset_button.grid(row=2, column=2)
 
 # Window on screen
